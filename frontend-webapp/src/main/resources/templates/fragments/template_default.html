@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout (head, body)" lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="static/css/flex.css" media="(min-width: 1280px)">
+    <link rel="stylesheet" href="static/css/flex_mobile.css" media="(min-width: 320px) and (max-width: 767px)">
+    <link rel="stylesheet" href="static/css/flex_tablet.css" media="(min-width: 768px) and (max-width: 1279px)">
+    <div id="head" th:replace="${head}"></div>
+</head>
+<body>
+<div id="header" th:replace="~{fragments/header :: header}"></div>
+<article>
+    <div id="flex-container">
+        <div class="flex-item-2">
+            <div id="body" th:replace="${body}"></div>
+        </div>
+    </div>
+    <div id="footer" th:replace="~{fragments/footer :: footer}"></div>
+</article>
+</body>
+</html>

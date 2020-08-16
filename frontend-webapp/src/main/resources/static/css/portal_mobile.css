@@ -1,0 +1,72 @@
+.chat-panel{
+    min-width: 400px;
+    max-width: 827px;
+    margin: 50px auto 50px;
+    padding: 1em 2em;
+    border: 1px solid #DDDDDD;
+    border-radius : 5px;
+    background-color: #ffffff;
+}
+
+.back-img{
+    width:                  100%;
+    height:                 1200px;
+    background-image:       url(https://debugroom-sample.s3-ap-northeast-1.amazonaws.com/message.jpg);
+    background-repeat:      no-repeat;
+    background-position:    center bottom;
+    -moz-background-size:   cover;
+    background-size:        cover;
+    filter:                 alpha(opacity=90);
+    -moz-opacity:           0.9;
+    opacity:                0.9;
+}
+
+button {
+    font-size : 0.9em;
+    display: block;
+    width : 200px;
+    height : 45px;
+    margin :  5px 10px 5px;
+    padding : 5px 10px 5px;
+    background : -webkit-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :    -moz-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :      -o-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :     -ms-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :         linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    border-radius         :5px 5px 5px 5px;
+    -moz-border-radius    :5px 5px 5px 5px;
+    -webkit-border-radius :5px 5px 5px 5px;
+    -o-border-radius      :5px 5px 5px 5px;
+    -ms-border-radius     :5px 5px 5px 5px;
+}
+
+#user-table button {
+    font-size : 0.6em;
+    width : 100px;
+    height : 25px;
+    margin :  5px 10px 5px;
+    padding : 5px 10px 5px;
+    background : -webkit-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :    -moz-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :      -o-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :     -ms-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :         linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    border-radius         :5px 5px 5px 5px;
+    -moz-border-radius    :5px 5px 5px 5px;
+    -webkit-border-radius :5px 5px 5px 5px;
+    -o-border-radius      :5px 5px 5px 5px;
+    -ms-border-radius     :5px 5px 5px 5px;
+}
+
+button:hover {
+    color : #ffffff;
+    background : -webkit-linear-gradient(top, #000000 0%, #000000 100%);
+    background :    -moz-linear-gradient(top, #000000 0%, #000000 100%);
+    background :      -o-linear-gradient(top, #000000 0%, #000000 100%);
+    background :     -ms-linear-gradient(top, #000000 0%, #000000 100%);
+    background :         linear-gradient(top, #000000 0%, #000000 100%);
+}
+
+img {
+    margin: 0 auto 0;
+}

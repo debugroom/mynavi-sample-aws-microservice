@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/template_default :: layout(~{::head/content()}, ~{::body/content()})}">
+<head>
+    <link rel="stylesheet" href="static/css/portal.css" media="(min-width: 1280px)">
+    <link rel="stylesheet" href="static/css/portal_mobile.css" media="(min-width: 320px) and (max-width: 767px)">
+    <link rel="stylesheet" href="static/css/portal_tablet.css" media="(min-width: 768px) and (max-width: 1279px)">
+    <title>Portal</title>
+</head>
+<body>
+  <div class="align-center">
+      Successful Login! SessionId : <span th:text="${sessionId}"></span>
+  </div>
+
+    <form id="logoutForm" action="/frontend/logout" method="get" >
+        <button id="logoutButton" name="logoutButton" class="main-button" type="submit" value="Submit" >Logout</button>
+    </form>
+
+</body>
+</html>

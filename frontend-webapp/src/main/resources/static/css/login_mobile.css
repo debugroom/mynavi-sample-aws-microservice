@@ -1,0 +1,118 @@
+.back-img{
+    width:                  100%;
+    height:                 800px;
+    background-image:       url(https://debugroom-sample.s3-ap-northeast-1.amazonaws.com/portal.png);
+    background-repeat:      no-repeat;
+    background-position:    center bottom;
+    -moz-background-size:   cover;
+    background-size:        cover;
+    filter:                 alpha(opacity=70);
+    -moz-opacity:           0.9;
+    opacity:                0.9;
+}
+
+.login-form{
+    margin : 50px 100px 50px ;
+    display : inline-block;
+}
+
+.login-form:after{
+    content: "";
+    clear: both;
+    display: block;
+}
+
+.login-form input {
+    border:0;
+    padding:10px;
+    font-size:1.3em;
+    font-family:Arial, sans-serif;
+    color:#aaa;
+    border:solid 1px #ccc;
+    margin:20px;
+    width:200px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -moz-box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
+    -webkit-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2);
+    box-shadow: inherit 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+input:focus {
+    border:solid 1px #EEA34A;
+}
+
+.login-form button {
+    font-size : 1.0em;
+    width : 100px;
+    height : 45px;
+    margin :  20px 50px 50px;
+    padding : 5px 10px 5px;
+    background : -webkit-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :    -moz-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :      -o-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :     -ms-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :         linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    border-radius         :5px 5px 5px 5px;
+    -moz-border-radius    :5px 5px 5px 5px;
+    -webkit-border-radius :5px 5px 5px 5px;
+    -o-border-radius      :5px 5px 5px 5px;
+    -ms-border-radius     :5px 5px 5px 5px;
+}
+
+.login-form button:hover {
+    color : #ffffff;
+    background : -webkit-linear-gradient(top, #000000 0%, #000000 100%);
+    background :    -moz-linear-gradient(top, #000000 0%, #000000 100%);
+    background :      -o-linear-gradient(top, #000000 0%, #000000 100%);
+    background :     -ms-linear-gradient(top, #000000 0%, #000000 100%);
+    background :         linear-gradient(top, #000000 0%, #000000 100%);
+}
+
+button {
+    font-size : 0.9em;
+    display: block;
+    width : 200px;
+    height : 45px;
+    margin :  5px 10px 5px;
+    padding : 5px 10px 5px;
+    background : -webkit-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :    -moz-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :      -o-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :     -ms-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :         linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    border-radius         :5px 5px 5px 5px;
+    -moz-border-radius    :5px 5px 5px 5px;
+    -webkit-border-radius :5px 5px 5px 5px;
+    -o-border-radius      :5px 5px 5px 5px;
+    -ms-border-radius     :5px 5px 5px 5px;
+}
+
+#user-table button {
+    font-size : 0.6em;
+    width : 100px;
+    height : 25px;
+    margin :  5px 10px 5px;
+    padding : 5px 10px 5px;
+    background : -webkit-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :    -moz-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :      -o-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :     -ms-linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    background :         linear-gradient(top, #ffffff 0%, #dddddd 100%);
+    border-radius         :5px 5px 5px 5px;
+    -moz-border-radius    :5px 5px 5px 5px;
+    -webkit-border-radius :5px 5px 5px 5px;
+    -o-border-radius      :5px 5px 5px 5px;
+    -ms-border-radius     :5px 5px 5px 5px;
+}
+
+button:hover {
+    color : #ffffff;
+    background : -webkit-linear-gradient(top, #000000 0%, #000000 100%);
+    background :    -moz-linear-gradient(top, #000000 0%, #000000 100%);
+    background :      -o-linear-gradient(top, #000000 0%, #000000 100%);
+    background :     -ms-linear-gradient(top, #000000 0%, #000000 100%);
+    background :         linear-gradient(top, #000000 0%, #000000 100%);
+}
+
