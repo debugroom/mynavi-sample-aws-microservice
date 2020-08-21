@@ -1,0 +1,2 @@
+service:
+  dns: http://localhost:8081

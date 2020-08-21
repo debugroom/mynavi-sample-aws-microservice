@@ -1,0 +1,10 @@
+cloud:
+  aws:
+    credentials:
+      profileName:
+      instanceProfile: false
+    stack:
+      auto: false
+    region:
+      auto: false
+      static: ap-northeast-1
