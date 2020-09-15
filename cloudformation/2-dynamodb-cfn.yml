@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: DynamoDB Definition depends on 1-vpc-cfn.yml
+
+Parameters:
+  VPCName:
+    Description: Target VPC Stack Name
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: ^[a-zA-Z][-a-zA-Z0-9]*$
+    Default: mynavi-sample-microservice-vpc
+  EnvType:
+    Description: Which environments to deploy your service.
+    Type: String
+    AllowedValues: ["Dev", "Staging", "Production"]
+    Default: Dev
+Conditions:
+  ProductionResources: {"Fn::Equals" : [{"Ref":"EnvType"}, "Production"]}
+  StagingResources: !Equals [ !Ref EnvType, "Staging"]
+  DevResources: {"Fn::Equals" : [{"Ref":"EnvType"}, "Dev"]}
+
+Resources:
+  MynaviSampleMicroserviceLogTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !If ["ProductionResources", "mynavi-sample-microservice-log-table",  !If ["StagingResources", "staging_mynavi-sample-microservice-log-table", "dev_mynavi-sample-microservice-log-table"]]
+      BillingMode: PROVISIONED
+      SSESpecification: !If ["ProductionResources", { "SSEEnabled" : true }, !Ref "AWS::NoValue"]
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+        - AttributeName: traceId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: traceIdIndex
+          KeySchema:
+            - AttributeName: traceId
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+Outputs:
+  EnvironmentRegion:
+    Description: Dev Environment Region
+    Value: !Sub ${AWS::Region}
+    Export:
+      Name: !Sub ${VPCName}-DynamoDB-${EnvType}-Region
+  DynamoDBServiceEndpoint:
+    Description: DynamoDB service endipoint
+    Value: !Sub https://dynamodb.${AWS::Region}.amazonaws.com
+    Export:
+      Name: !Sub ${VPCName}-DynamoDB-${EnvType}-ServiceEndpoint
+  DynamoDBTableProduction:
+    Condition: "ProductionResources"
+    Description: DynamoDB LogTable for Production
+    Value: !Ref MynaviSampleMicroserviceLogTable
+    Export:
+      Name: !Sub ${VPCName}-DynamoDB-ProductionSampleTable
+  DynamoDBTableStaging:
+    Condition: "StagingResources"
+    Description: DynamoDB LogTable for Staging
+    Value: !Ref MynaviSampleMicroserviceLogTable
+    Export:
+      Name: !Sub ${VPCName}-DynamoDB-StagingSampleTable
+  DynamoDBTableDev:
+    Condition: "DevResources"
+    Description: DynamoDB LogTable for Dev
+    Value: !Ref MynaviSampleMicroserviceLogTable
+    Export:
+      Name: !Sub ${VPCName}-DynamoDB-DevSampleTable

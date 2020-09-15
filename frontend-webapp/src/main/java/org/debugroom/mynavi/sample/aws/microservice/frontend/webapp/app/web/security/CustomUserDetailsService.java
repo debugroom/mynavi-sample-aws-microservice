@@ -1,5 +1,6 @@
 package org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web.security;
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import org.debugroom.mynavi.sample.aws.microservice.common.apinfra.exception.BusinessException;
 import org.debugroom.mynavi.sample.aws.microservice.common.model.UserResource;
 import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.domain.repository.UserResourceRepository;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.List;
 import java.util.Locale;
 
+@XRayEnabled
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 

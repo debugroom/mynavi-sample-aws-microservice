@@ -4,14 +4,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import org.debugroom.mynavi.sample.aws.microservice.backend.user.domain.model.entity.User;
-import org.debugroom.mynavi.sample.aws.microservice.backend.user.domain.repository.UserRepository;
+import org.debugroom.mynavi.sample.aws.microservice.backend.user.domain.repository.jpa.UserRepository;
 import org.debugroom.mynavi.sample.aws.microservice.common.apinfra.exception.BusinessException;
 
+@XRayEnabled
 @Service
 public class SampleServiceImpl implements SampleService{
 

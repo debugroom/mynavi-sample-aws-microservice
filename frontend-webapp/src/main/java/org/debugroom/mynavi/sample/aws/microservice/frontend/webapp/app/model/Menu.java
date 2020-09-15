@@ -2,9 +2,9 @@ package org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.model;
 
 public enum Menu {
 
-    LOGOUT("ログアウト", "/logout"),
-    PORTAL("ポータル", "/portal"),
-    USER_MANAGEMENT("ユーザ管理", "/user-management");
+    LOGOUT("ログアウト", "/frontend/logout"),
+    PORTAL("ポータル", "/frontend/portal"),
+    USER_MANAGEMENT("ユーザ管理", "/frontend/user-management");
 
     private String name;
     private String path;

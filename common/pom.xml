@@ -29,7 +29,15 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-aws</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.boostchicken</groupId>
+            <artifactId>spring-data-dynamodb</artifactId>
+            <version>5.2.1</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -46,6 +54,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
     </dependencies>
 
     <dependencyManagement>

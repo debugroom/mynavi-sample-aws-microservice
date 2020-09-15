@@ -1,0 +1,151 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: CloudFormation template with YAML - SecurityGroup depends on 1-vpc-cfn.yml.
+
+Parameters:
+  VPCName:
+    Description: Target VPC Stack Name
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: ^[a-zA-Z][-a-zA-Z0-9]*$
+    Default: mynavi-sample-microservice-vpc
+  VPCCiderBlock:
+    Description: CiderBlock paramater for VPC
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    Default: 172.5.0.0/16
+
+Resources:
+  SecurityGroupFrontendALB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: SecurityGroupFrontendLB
+      GroupDescription: http access
+      VpcId:
+        Fn::ImportValue: !Sub ${VPCName}-VPCID
+      Tags:
+        - Key : Name
+          Value: !Sub ${VPCName}-SecurityGroupFrontendALB
+
+  SecurityGroupInggressFrontendALB:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SecurityGroupFrontendALB
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      CidrIp: 0.0.0.0/0
+
+  SecurityGroupBackendALB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: SecurityGroupBackendALB
+      GroupDescription: http access
+      VpcId:
+        Fn::ImportValue: !Sub ${VPCName}-VPCID
+      Tags:
+        - Key : Name
+          Value: !Sub ${VPCName}-SecurityGroupBackendALB
+
+  SecurityGroupIngressBackendALB:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SecurityGroupBackendALB
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      CidrIp: !Ref VPCCiderBlock
+
+  SecurityGroupFrontendEcsCluster:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: SecurityGroupFrontendEcsCluster
+      GroupDescription: http access only alb
+      VpcId:
+        Fn::ImportValue: !Sub ${VPCName}-VPCID
+      Tags:
+        - Key : Name
+          Value: !Sub ${VPCName}-SecurityGroupFrontendEcsCluster
+
+  SecurityGroupIngressFrontendEcsCluster:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SecurityGroupFrontendEcsCluster
+      IpProtocol: tcp
+      FromPort: 32768
+      ToPort: 61000
+      SourceSecurityGroupId: !Ref SecurityGroupFrontendALB
+
+  SecurityGroupBackendEcsCluster:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: SecurityGroupBackendEcsCluster
+      GroupDescription: http access only alb
+      VpcId:
+        Fn::ImportValue: !Sub ${VPCName}-VPCID
+      Tags:
+        - Key : Name
+          Value: !Sub ${VPCName}-SecurityGroupBackendEcsCluster
+
+  SecurityGroupIngressBackendEcsCluster:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SecurityGroupBackendEcsCluster
+      IpProtocol: tcp
+      FromPort: 32768
+      ToPort: 61000
+      SourceSecurityGroupId: !Ref SecurityGroupBackendALB
+
+  SecurityGroupRdsPostgres:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: SecurityGroupRdsPostgres
+      GroupDescription: db access only backend subnet
+      VpcId:
+        Fn::ImportValue: !Sub ${VPCName}-VPCID
+      Tags:
+        - Key: Name
+          Value: !Sub ${VPCName}-SecurityGroupRdsPostgres
+
+  SecurityGroupIngressRdsPostgresFromBackendECS:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SecurityGroupRdsPostgres
+      IpProtocol: tcp
+      FromPort: 5432
+      ToPort: 5432
+      SourceSecurityGroupId: !Ref SecurityGroupBackendEcsCluster
+
+Outputs:
+  SecurityGroupPublicALB:
+    Description: Security Group for Frontend ALB
+    Value: !Ref SecurityGroupFrontendALB
+    Export:
+      Name: !Sub ${VPCName}-SecurityGroupFrontendALB
+
+  SecurityGroupPrivateALB:
+    Description: Security Group for Backend ALB
+    Value: !Ref SecurityGroupBackendALB
+    Export:
+      Name: !Sub ${VPCName}-SecurityGroupBackendALB
+
+  SecurityGroupFrontendEcsCluster:
+    Description: Security Group for Frontend ECS Cluster
+    Value: !Ref SecurityGroupFrontendEcsCluster
+    Export:
+      Name: !Sub ${VPCName}-SecurityGroupFrontendEcsCluster
+
+  SecurityGroupBackendEcsCluster:
+    Description: Security Group for Backend ECS Cluster
+    Value: !Ref SecurityGroupBackendEcsCluster
+    Export:
+      Name: !Sub ${VPCName}-SecurityGroupBackendEcsCluster
+
+  SecurityGroupRdsPostgress:
+    Description: Security Group for RDS PostgreSQL
+    Value: !Ref SecurityGroupRdsPostgres
+    Export:
+      Name: !Sub ${VPCName}-SecurityGroupRdsPostgres

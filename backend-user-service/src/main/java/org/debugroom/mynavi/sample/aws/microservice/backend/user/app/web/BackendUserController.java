@@ -2,6 +2,7 @@ package org.debugroom.mynavi.sample.aws.microservice.backend.user.app.web;
 
 import java.util.List;
 
+import com.amazonaws.xray.spring.aop.XRayEnabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,6 +11,7 @@ import org.debugroom.mynavi.sample.aws.microservice.backend.user.domain.service.
 import org.debugroom.mynavi.sample.aws.microservice.common.apinfra.exception.BusinessException;
 import org.debugroom.mynavi.sample.aws.microservice.common.model.UserResource;
 
+@XRayEnabled
 @RestController
 @RequestMapping("api/v1")
 public class BackendUserController {

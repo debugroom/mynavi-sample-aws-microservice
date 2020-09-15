@@ -2,13 +2,17 @@ package org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web;
 
 import javax.servlet.http.HttpSession;
 
-import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.model.PortalInformation;
-import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web.security.CustomUserDetails;
+import com.amazonaws.xray.spring.aop.XRayEnabled;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.model.PortalInformation;
+import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web.security.CustomUserDetails;
+
+@XRayEnabled
 @Controller
 public class SampleController {
 
