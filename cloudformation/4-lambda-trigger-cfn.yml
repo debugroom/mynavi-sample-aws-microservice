@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Custom Resource template with YAML -Custom Resource Depends on 1-vpc-cfn.yml, 2-s3-lambda-deploy-cfn.yml, 3-lambda-cfn.yml
+
+Parameters:
+  VPCName:
+    Description: Target VPC Stack Name
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: ^[a-zA-Z][-a-zA-Z0-9]*$
+    Default: mynavi-sample-microservice-vpc
+
+Resources:
+  LambdaForChangeCognitoUserStatusFunctionTrigger:
+    Type: Custom::LambdaTrigger
+    DependsOn: LambdaForAddCognitoUserFunctionTrigger
+    Properties:
+      ServiceToken:
+        Fn::ImportValue: !Sub ${VPCName}-LamdaForChangeCognitoUserStatusFunctionArn
+      Region: !Ref "AWS::Region"
+
+
+  LambdaForAddCognitoUserFunctionTrigger:
+    Type: Custom::LambdaTrigger
+    DependsOn: LambdaForAddClientSecretToParameterStoreFunctionTrigger
+    Properties:
+      ServiceToken:
+        Fn::ImportValue: !Sub ${VPCName}-LamdaForAddCognitoUserFunctionArn
+      Region: !Ref "AWS::Region"
+
+  LambdaForAddClientSecretToParameterStoreFunctionTrigger:
+    Type: Custom::LambdaTrigger
+    Properties:
+      ServiceToken:
+        Fn::ImportValue: !Sub ${VPCName}-LamdaForAddClientSecretToParameterStoreFunctionArn
+      Region: !Ref "AWS::Region"

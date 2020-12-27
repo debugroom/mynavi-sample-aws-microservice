@@ -8,21 +8,26 @@ cloud:
     region:
       auto: false
       static: ap-northeast-1
+spring:
+  cloud:
+    function:
+      scan:
+        packages: org.debugroom.mynavi.sample.aws.microservice.lambda.app.function
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils : error
 service:
-  applicationLoadBalancer:
-    dns: http://localhost:8081
   systemsManagerParameterStore:
     cognito:
       appClientSecret: mynavi-sample-microservice-backend-app-client-secret
   cloudformation:
-    dynamodb:
-      endpoint: mynavi-sample-microservice-vpc-DynamoDB-Dev-ServiceEndpoint
-      region: mynavi-sample-microservice-vpc-DynamoDB-Dev-Region
     cognito:
       appClientId: mynavi-sample-microservice-vpc-Cognito-Dev-AppClientId
       domain: mynavi-sample-microservice-vpc-Cognito-Dev-UserPoolDomain
-      userPoolId: mynavi-sample-microservice-vpc-Cognito-Dev-UserPoolId
+      userPoolId: mynavi-sample-microservice-vpc-Cognito-Dev-UserPool
       redirectUri: mynavi-sample-microservice-vpc-Cognito-Dev-RedirectUri
       jwkSetUri: mynavi-sample-microservice-vpc-Cognito-Dev-JwkSetUri
       Region: mynavi-sample-microservice-vpc-Cognito-Dev-Region
-

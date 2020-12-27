@@ -12,8 +12,10 @@ import com.amazonaws.xray.javax.servlet.AWSXRayServletFilter;
 import com.amazonaws.xray.spring.aop.AbstractXRayInterceptor;
 import com.amazonaws.xray.strategy.sampling.LocalizedSamplingStrategy;
 
+import lombok.AllArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.domain.ServiceProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -26,15 +28,14 @@ import org.springframework.util.ResourceUtils;
 
 import org.debugroom.mynavi.sample.aws.microservice.common.apinfra.cloud.aws.CloudFormationStackResolver;
 
+@AllArgsConstructor
 @Aspect
 @Configuration
 @EnableAspectJAutoProxy
 public class XRayConfig extends AbstractXRayInterceptor {
 
-    private static final String DYNAMODB_ENDPOINT_EXPORT = "mynavi-sample-microservice-vpc-DynamoDB-Dev-ServiceEndpoint";
-    private static final String DYNAMODB_REGION_EXPORT = "mynavi-sample-microservice-vpc-DynamoDB-Dev-Region";
+    ServiceProperties serviceProperties;
 
-    @Autowired
     CloudFormationStackResolver cloudFormationStackResolver;
 
     static {
@@ -62,11 +63,13 @@ public class XRayConfig extends AbstractXRayInterceptor {
 
     @Bean
     AmazonDynamoDB amazonDynamoDB(){
+        String endpoint = cloudFormationStackResolver.getExportValue(
+                serviceProperties.getCloudFormation().getDynamodb().getEndpoint());
+        String region = cloudFormationStackResolver.getExportValue(
+                serviceProperties.getCloudFormation().getDynamodb().getRegion());
         return AmazonDynamoDBAsyncClientBuilder.standard()
                 .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration(
-                                cloudFormationStackResolver.getExportValue(DYNAMODB_ENDPOINT_EXPORT),
-                                cloudFormationStackResolver.getExportValue(DYNAMODB_REGION_EXPORT)))
+                        new AwsClientBuilder.EndpointConfiguration(endpoint,region))
                 .withRequestHandlers(new TracingHandler(AWSXRay.getGlobalRecorder()))
                 .build();
     }

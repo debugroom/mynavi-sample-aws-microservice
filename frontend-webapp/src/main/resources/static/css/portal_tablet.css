@@ -8,6 +8,16 @@
     background-color: #ffffff;
 }
 
+.panel{
+    min-width: 400px;
+    max-width: 827px;
+    margin: 0px auto 50px;
+    padding: 1em 2em;
+    border: 1px solid #DDDDDD;
+    border-radius : 5px;
+    background-color: #ffffff;
+}
+
 .back-img{
     width:                  100%;
     height:                 1200px;

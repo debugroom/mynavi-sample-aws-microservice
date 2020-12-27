@@ -18,7 +18,7 @@ import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web.secu
 import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web.security.LoginSuccessHandler;
 import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web.security.SessionExpiredDetectingLoginUrlAuthenticationEntryPoint;
 
-@EnableWebSecurity
+//@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override

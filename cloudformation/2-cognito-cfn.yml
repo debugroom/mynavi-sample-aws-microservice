@@ -1,0 +1,254 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Cognito Definition depends on 1-vpc-cfn.yml
+
+Parameters:
+  VPCName:
+    Description: Target VPC Stack Name
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: ^[a-zA-Z][-a-zA-Z0-9]*$
+    Default: mynavi-sample-microservice-vpc
+  EnvType:
+    Description: Which environments to deploy your service.
+    Type: String
+    AllowedValues: ["Dev", "Staging", "Production"]
+    Default: Dev
+Conditions:
+  ProductionResources: {"Fn::Equals" : [{"Ref":"EnvType"}, "Production"]}
+  StagingResources: !Equals [ !Ref EnvType, "Staging"]
+  DevResources: {"Fn::Equals" : [{"Ref":"EnvType"}, "Dev"]}
+
+Resources:
+  MynaviSampleUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !If ["ProductionResources", "mynavi-sample-microservice-userpool",  !If ["StagingResources", "staging_mynavi-sample-microservice-userpool", "dev_mynavi-sample-microservice-userpool"]]
+      AliasAttributes:
+        - email
+      UsernameConfiguration:
+        CaseSensitive: false
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 6
+          RequireLowercase: true
+          RequireNumbers: false
+          RequireSymbols: false
+          RequireUppercase: false
+      Schema:
+        - Name: family_name
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: given_name
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: loginId
+          AttributeDataType: String
+          Mutable: false
+          Required: false
+        - Name: isAdmin
+          AttributeDataType: Number
+          Mutable: true
+          Required: false
+          NumberAttributeConstraints:
+            MinValue: "0"
+            MaxValue: "2"
+
+#  MynaviUserTaro:
+#    Type: AWS::Cognito::UserPoolUser
+#    Properties:
+#      Username: taro.mynavi
+#      UserAttributes:
+#        - Name: family_name
+#          Value: mynavi
+#        - Name: given_name
+#          Value: taro
+#        - Name: "custom:loginId"
+#          Value: taro.mynavi
+#        - Name: "custom:isAdmin"
+#          Value: "1"
+#        - Name: email
+#          Value: kohei.kawabata@gmail.com
+#        - Name: email_verified
+#          Value: "true"
+#      UserPoolId: !Ref MynaviSampleUserPool
+
+  MynaviMobileAppClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !If ["ProductionResources", "mynavi-sample-microservice-mobile-app",  !If ["StagingResources", "staging_mynavi-sample-microservice-mobile-app", "dev_mynavi-sample-microservice-mobile-app"]]
+      GenerateSecret: false
+      RefreshTokenValidity: 30
+      UserPoolId : !Ref MynaviSampleUserPool
+      ExplicitAuthFlows:
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  MynaviBackendAppClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !If ["ProductionResources", "mynavi-sample-microservice-backend-app",  !If ["StagingResources", "staging_mynavi-sample-microservice-backend-app", "dev_mynavi-sample-microservice-backend-app"]]
+      GenerateSecret: true
+      RefreshTokenValidity: 30
+      UserPoolId : !Ref MynaviSampleUserPool
+      CallbackURLs:
+        - !If ["ProductionResources", "https://xxxx/login/oauth2/code/cognito",  !If ["StagingResources", "https://xxxx/login/oauth2/code/cofnito", "http://localhost:8080/frontend/login/oauth2/code/cognito"]]
+      LogoutURLs:
+        - !If ["ProductionResources", "https://xxxx/",  !If ["StagingResources", "https://xxxx/", "http://localhost:8080/frontend"]]
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthScopes:
+        - openid
+        - aws.cognito.signin.user.admin
+        - profile
+      AllowedOAuthFlowsUserPoolClient: true
+      SupportedIdentityProviders:
+        - COGNITO
+      ExplicitAuthFlows:
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  MynaviSampleUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: debugroom-mynavi-sample-microservice-1
+      UserPoolId: !Ref MynaviSampleUserPool
+
+  MynaviSampleIdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      IdentityPoolName:  !If ["ProductionResources", "mynavi-sample-microservice-idpool",  !If ["StagingResources", "staging_mynavi-sample-microservice-idpool", "dev_mynavi-sample-microservice-idpool"]]
+      AllowUnauthenticatedIdentities: false
+      CognitoIdentityProviders:
+        - ClientId:
+            Ref: MynaviBackendAppClient
+          ProviderName:
+            Fn::Join:
+              - ""
+              - - "cognito-idp."
+                - !Sub ${AWS::Region}
+                - ".amazonaws.com/"
+                - !Ref MynaviSampleUserPool
+
+  MynaviSampleUnauthenticatedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - mobileanalytics:PutEvents
+              - cognito-sync:*
+            Resource:
+              - "*"
+  MynaviSampleUnauthenticatedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRoleWithWebIdentity"
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud": !Ref MynaviSampleIdentityPool
+              ForAnyValue:StringLike:
+                "cognito-identity.amazonaws.com:amr": unauthenticated
+      ManagedPolicyArns:
+        - !Ref MynaviSampleUnauthenticatedPolicy
+
+  MynaviSampleAuthenticatedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - mobileanalytics:PutEvents
+              - cognito-sync:*
+              - cognito-identity:*
+            Resource:
+              - "*"
+  MynaviSampleAuthenticatedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRoleWithWebIdentity"
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud": !Ref MynaviSampleIdentityPool
+              ForAnyValue:StringLike:
+                "cognito-identity.amazonaws.com:amr": authenticated
+      ManagedPolicyArns:
+        - !Ref MynaviSampleAuthenticatedPolicy
+
+  RoleAttachment:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties:
+      IdentityPoolId: !Ref MynaviSampleIdentityPool
+      Roles:
+        unauthenticated : !GetAtt MynaviSampleUnauthenticatedRole.Arn
+        authenticated: !GetAtt MynaviSampleAuthenticatedRole.Arn
+
+Outputs:
+  MynaviSampleUserPool:
+    Description: UserPool ID
+    Value: !Ref MynaviSampleUserPool
+    Export:
+      Name: !Sub ${VPCName}-Cognito-${EnvType}-UserPool
+  MynaviSampleMobileAppClient:
+    Description: Mobile Client
+    Value: !Ref MynaviMobileAppClient
+    Export:
+      Name: !Sub ${VPCName}-Cognito-${EnvType}-MobileAppClient
+  MynaviSampleBackendAppClientID:
+    Description: BackendApp Client
+    Value: !Ref MynaviBackendAppClient
+    Export:
+      Name: !Sub ${VPCName}-Cognito-${EnvType}-AppClientId
+  MynaviSampleRedirectUri:
+    Description: RedirectUri
+    Value: !If ["ProductionResources", "https://xxxx/login/oauth2/code/cognito",  !If ["StagingResources", "https://xxxx/login/oauth2/code/cofnito", "http://localhost:8080/frontend/login/oauth2/code/cognito"]]
+    Export:
+      Name: !Sub ${VPCName}-Cognito-${EnvType}-RedirectUri
+  MynaviSampleJwkSetUri:
+    Description: jwk-set-uri
+    Value:
+      Fn::Join:
+        - ""
+        - - "https://cognito-idp."
+          - !Sub ${AWS::Region}
+          - ".amazonaws.com/"
+          - !Ref MynaviSampleUserPool
+          - "/.well-known/jwks.json"
+    Export:
+      Name: !Sub ${VPCName}-Cognito-${EnvType}-JwkSetUri
+  MynaviSampleUserPoolDomain:
+    Description: jwk-set-uri
+    Value:
+      Fn::Join:
+        - ""
+        - - "https://"
+          - !Ref MynaviSampleUserPoolDomain
+          - ".auth."
+          - !Sub ${AWS::Region}
+          - ".amazoncognito.com"
+    Export:
+      Name: !Sub ${VPCName}-Cognito-${EnvType}-UserPoolDomain
+  MynaviSampleIdentityPool:
+    Description: Indentity Pool
+    Value: !Ref MynaviSampleIdentityPool
+    Export:
+      Name: !Sub ${VPCName}-Cognito-${EnvType}-IdentitiyPool

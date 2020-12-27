@@ -26,7 +26,7 @@ public class DevConfig {
     @Bean
     public WebClient userWebClient(){
         return WebClient.builder()
-                .baseUrl(serviceProperties.getDns())
+                .baseUrl(serviceProperties.getApplicationLoadBalancer().getDns())
                 .filter(exchangeFilterFunction())
                 .build();
     }

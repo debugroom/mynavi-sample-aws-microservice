@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: S3 Bucket for Lambda function template with YAML - S3 Bucket Definition
+
+Parameters:
+  VPCName:
+    Description: Target VPC Stack Name
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: ^[a-zA-Z][-a-zA-Z0-9]*$
+    Default: mynavi-sample-microservice-vpc
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: debugroom-mynavi-microservice-cfn-lambda-bucket
+      AccessControl: "Private"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+
+Outputs:
+  S3Bucket:
+    Description: Lambda deploy S3 bucket name
+    Value: !Ref S3Bucket
+    Export:
+      Name: !Sub ${VPCName}-Lambda-S3Bucket
+
+  S3BucketArn:
+    Description: S3 for Lambda bucket arn
+    Value: !GetAtt S3Bucket.Arn
+    Export:
+      Name: !Sub ${VPCName}-Lambda-S3Bucket-Arn
