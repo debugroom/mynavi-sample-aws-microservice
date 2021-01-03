@@ -6,18 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import net.minidev.json.JSONArray;
+
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParameterRequest;
-import lombok.AllArgsConstructor;
-import net.minidev.json.JSONArray;
-import org.debugroom.mynavi.sample.aws.microservice.common.apinfra.cloud.aws.CloudFormationStackResolver;
-import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web.security.CognitoLogoutSuccessHandler;
-import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web.security.CognitoOAuth2User;
-import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.domain.ServiceProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -35,6 +30,13 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+
+import org.debugroom.mynavi.sample.aws.microservice.common.apinfra.cloud.aws.CloudFormationStackResolver;
+import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web.security.CognitoLogoutSuccessHandler;
+import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web.security.CognitoOAuth2User;
+import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.domain.ServiceProperties;
+
+import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @EnableWebSecurity

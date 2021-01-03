@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.Version;
 
 import lombok.AllArgsConstructor;
@@ -50,7 +51,7 @@ public class Credential {
     }
 
     @Basic
-    @Column(name = "credential_key", nullable = true, length = 255)
+    @Column(name = "credential_key", nullable = true, length = 2048)
     public String getCredentialKey() {
         return credentialKey;
     }
@@ -83,6 +84,7 @@ public class Credential {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id",
             nullable = false, insertable = false, updatable = false)
+    @OrderColumn
     public User getUsrByUserId() {
         return usrByUserId;
     }

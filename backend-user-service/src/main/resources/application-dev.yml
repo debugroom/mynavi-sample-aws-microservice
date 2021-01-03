@@ -8,3 +8,7 @@ cloud:
     region:
       auto: false
       static: ap-northeast-1
+service:
+  cloudformation:
+    cognito:
+      jwkSetUri: mynavi-sample-microservice-vpc-Cognito-Dev-JwkSetUri

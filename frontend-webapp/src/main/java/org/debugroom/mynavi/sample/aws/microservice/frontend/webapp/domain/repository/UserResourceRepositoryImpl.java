@@ -1,19 +1,23 @@
 package org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.domain.repository;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import com.amazonaws.xray.spring.aop.XRayEnabled;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import org.debugroom.mynavi.sample.aws.microservice.common.model.CredentialResource;
 import org.debugroom.mynavi.sample.aws.microservice.common.apinfra.exception.BusinessException;
 import org.debugroom.mynavi.sample.aws.microservice.common.apinfra.exception.BusinessExceptionResponse;
 import org.debugroom.mynavi.sample.aws.microservice.common.apinfra.exception.ErrorResponse;
@@ -83,6 +87,37 @@ public class UserResourceRepositoryImpl implements UserResourceRepository{
                 webClient.get()
                         .uri(uriBuilder -> uriBuilder.path(endpoint).build())
                         .retrieve().bodyToMono(UserResource[].class).block());
+    }
+
+
+    @Override
+    public List<CredentialResource> saveTokens(List<CredentialResource> credentialResources) throws BusinessException {
+        String endpoint = SERVICE_NAME + API_VERSION + "/users/{userId}/credentials";
+        try {
+            return webClient.post()
+                    .uri(uriBuilder -> uriBuilder.path(endpoint).build(
+                            credentialResources.get(0).getUserId()))
+                    .bodyValue(credentialResources)
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<ArrayList<CredentialResource>>(){})
+                    .block();
+        } catch (WebClientResponseException e) {
+            try {
+                ErrorResponse errorResponse = objectMapper.readValue(
+                        e.getResponseBodyAsString(), ErrorResponse.class);
+                if (errorResponse instanceof BusinessExceptionResponse) {
+                    throw ((BusinessExceptionResponse) errorResponse).getBusinessException();
+                }else {
+                    String errorCode = "SE0002";
+                    throw new SystemException(errorCode, messageSource.getMessage(
+                            errorCode, new String[]{endpoint}, Locale.getDefault()), e);
+                }
+            } catch (IOException e1) {
+                String errorCode = "SE0002";
+                throw new SystemException(errorCode, messageSource.getMessage(
+                        errorCode, new String[]{endpoint}, Locale.getDefault()), e1);
+            }
+        }
     }
 
 }

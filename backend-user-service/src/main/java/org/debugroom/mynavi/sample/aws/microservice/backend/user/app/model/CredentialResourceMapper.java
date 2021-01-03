@@ -22,4 +22,18 @@ public interface CredentialResourceMapper {
                 .collect(Collectors.toList());
     }
 
+    public static Credential mapToEntity(CredentialResource credentialResource){
+        return Credential.builder()
+                .userId(credentialResource.getUserId())
+                .credentialType(credentialResource.getCredentialType())
+                .credentialKey(credentialResource.getCredentialKey())
+                .validDate(credentialResource.getValidDate())
+                .build();
+    }
+
+    public static List<Credential> mapToEntity(List<CredentialResource> credentialResources){
+        return credentialResources.stream().map(CredentialResourceMapper::mapToEntity)
+                .collect(Collectors.toList());
+    }
+
 }

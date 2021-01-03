@@ -9,7 +9,7 @@ CREATE TABLE CREDENTIAL
     -- 認証タイプ
     CREDENTIAL_TYPE varchar(512) NOT NULL,
     -- 認証キー
-    CREDENTIAL_KEY varchar(512),
+    CREDENTIAL_KEY varchar(2048),
     -- 有効日時
     VALID_DATE timestamp,
     -- バージョン

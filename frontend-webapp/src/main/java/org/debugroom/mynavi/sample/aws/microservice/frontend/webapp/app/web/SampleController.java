@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import org.debugroom.mynavi.sample.aws.microservice.common.apinfra.exception.BusinessException;
+import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.domain.service.OrchestrationService;
 import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.model.PortalInformation;
 import org.debugroom.mynavi.sample.aws.microservice.frontend.webapp.app.web.security.CustomUserDetails;
 
@@ -23,6 +25,14 @@ public class SampleController {
 
     @Autowired
     OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
+
+    @Autowired
+    OrchestrationService orchestrationService;
+
+    @GetMapping("/error")
+    public String error(){
+        return "error";
+    }
 
     @GetMapping(value = "/login")
     public String login(){
@@ -55,14 +65,20 @@ public class SampleController {
                         oAuth2AuthenticationToken.getAuthorizedClientRegistrationId(),
                         oAuth2AuthenticationToken.getName());
         model.addAttribute("oidcUser", oidcUser);
+
         model.addAttribute( oAuth2AuthorizedClientService
                 .loadAuthorizedClient(
                         oAuth2AuthenticationToken.getAuthorizedClientRegistrationId(),
                         oAuth2AuthenticationToken.getName()));
-        model.addAttribute("accessToken", oAuth2AuthorizedClientService
-                .loadAuthorizedClient(
-                        oAuth2AuthenticationToken.getAuthorizedClientRegistrationId(),
-                        oAuth2AuthenticationToken.getName()).getAccessToken());
+
+        model.addAttribute("accessToken", oAuth2AuthorizedClient.getAccessToken());
+        try{
+            orchestrationService.addTokens(oidcUser.getIdToken(), oAuth2AuthorizedClient.getAccessToken(),
+                    oAuth2AuthorizedClient.getRefreshToken());
+        }catch (BusinessException e){
+            // If the Business Exception occur, You should transit to Error page.
+            return "error";
+        }
         return "oauth2Portal";
     }
 

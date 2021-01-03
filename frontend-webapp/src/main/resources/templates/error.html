@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <title>Error</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/css/flex.css" media="(min-width: 1280px)">
+    <link rel="stylesheet" href="static/css/flex_mobile.css" media="(min-width: 320px) and (max-width: 767px)">
+    <link rel="stylesheet" href="static/css/flex_tablet.css" media="(min-width: 768px) and (max-width: 1279px)">
+    <link rel="stylesheet" href="static/css/login.css" media="(min-width: 1280px)">
+    <link rel="stylesheet" href="static/css/login_mobile.css" media="(min-width: 320px) and (max-width: 767px)">
+    <link rel="stylesheet" href="static/css/login_tablet.css" media="(min-width: 768px) and (max-width: 1279px)">
+</head>
+<body>
+<h1>Mynavi Microservice WebApp Error!</h1>
+
+<div th:if="${param.containsKey('error')}"
+     th:with="exception = ${SPRING_SECURITY_LAST_EXCEPTION} ?: ${session[SPRING_SECURITY_LAST_EXCEPTION]}">
+    <ul th:if="${exception != null}" class="alert alert-error">
+        <li th:text="${exception.message}"></li>
+    </ul>
+</div>
+
+</body>
