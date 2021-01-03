@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -37,6 +38,13 @@ public class SetMenuInterceptor extends HandlerInterceptorAdapter {
                     }else {
                         modelAndView.addObject("menuList", getMenuList());
 
+                    }
+                }else if(principal instanceof DefaultOidcUser){
+                    if(((DefaultOidcUser) principal).getAuthorities()
+                            .contains(new SimpleGrantedAuthority("ROLE_ADMIN"))){
+                        modelAndView.addObject("menuList", getAdminMenuList());
+                    }else {
+                        modelAndView.addObject("menuList", getMenuList());
                     }
                 }
             }
